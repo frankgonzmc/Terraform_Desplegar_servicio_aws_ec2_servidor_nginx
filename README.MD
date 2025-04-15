@@ -6,3 +6,7 @@
 #terraform apply
 #Eliminar los recursos
 #terraform destroy
+Crear la clave SSH(Local):
+ssh-keygen -t rsa -b 2048 -f "name.key"         ==> En esta ocasion "nginx-server.key"
+
+

@@ -13,4 +13,14 @@ resource "aws_instance" "nginx-server" {
                 sudo systemctl enable nginx
                 sudo systemctl strat nginx
                 EOF
-} 
+    #Conectar la llave con el recurso de la instancia
+    key_name = aws_key_pair.nginx-server-ssh.key_name
+}
+
+
+###RECURSO PARA CLAVE SSH###
+resource "aws_key_pair" "nginx-server-ssh" {
+    key_name = "nginx-server-ssh"
+    #Desde la carpeta raiz usar la llave publica
+    public_key = file("nginx-server.key.pub")
+}
