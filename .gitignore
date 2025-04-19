@@ -3,3 +3,10 @@
 !README.MD
 !.gitignore
 !main.tf
+!ec2.tf
+!key.tf
+!outputs.tf
+!provider.tf
+!sg.tf
+!variables.tf
+!terraform.tfvars

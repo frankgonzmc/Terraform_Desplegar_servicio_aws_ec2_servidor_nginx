@@ -1,3 +1,26 @@
+###VARIABLES###
+
+variable "ami_id" {
+    description = "ID de la ami para el EC2"
+    default = "ami-0440d3b780d96b29d"
+}
+
+variable "instance_type" {
+    description = "Tipo de  instancia EC2"
+    default = "t3.micro"
+}
+
+variable "server_name" {
+    description = "Nombre del servidor web"
+    default = "nginx-server"
+}
+
+variable "enviroment" {
+    description = "Ambiente de la aplicacion"
+    default = "test"
+}
+
+
 ###Provider###
 provider "aws" {
     region = "us-east-1"
@@ -5,8 +28,8 @@ provider "aws" {
 
 ###Recurso###
 resource "aws_instance" "nginx-server" {
-    ami = "ami-0440d3b780d96b29d"
-    instance_type = "t3.micro"
+    ami = var.ami_id
+    instance_type = var.instance_type
     user_data = <<-EOF
                 #!/bin/bash
                 sudo yum install -y nginx
@@ -22,8 +45,8 @@ resource "aws_instance" "nginx-server" {
     ]
 
     tags = {
-        Name = "nginx-server"
-        Enviroment = "test"
+        Name = var.server_name
+        Enviroment = var.enviroment
         Owner = "franktoomg@gmail.com"
         Team = "DevOps"
         Project = "Prueba"
@@ -33,13 +56,13 @@ resource "aws_instance" "nginx-server" {
 
 ###RECURSO PARA CLAVE SSH###
 resource "aws_key_pair" "nginx-server-ssh" {
-    key_name = "nginx-server-ssh"
+    key_name = "${var.server_name}-ssh"
     #Desde la carpeta raiz usar la llave publica
-    public_key = file("nginx-server.key.pub")
+    public_key = file("${var.server_name}.key.pub")
 
     tags = {
-        Name = "nginx-server-ssh"
-        Enviroment = "test"
+        Name = "${var.server_name}-ssh"   #Var.server_name + -ssh
+        Enviroment = var.enviroment
         Owner = "franktoomg@gmail.com"
         Team = "DevOps"
         Project = "Prueba"
@@ -49,7 +72,7 @@ resource "aws_key_pair" "nginx-server-ssh" {
 
 ###CREAR EL SECURITY GROUP COMO RECURSO PARA LA MV(FIREWALL EN AWS)###
 resource "aws_security_group" "nginx-server-sg" {
-    name = "nginx-server-sg"
+    name = "${var.server_name}-sg"
     description = "Security group que solo permite conexiones ssh y http"
 
     #Reglas de entrada:
@@ -78,8 +101,8 @@ resource "aws_security_group" "nginx-server-sg" {
     }
 
     tags = {
-        Name = "nginx-server-sg"
-        Enviroment = "test"
+        Name = "${var.server_name}-sg"
+        Enviroment = var.enviroment
         Owner = "franktoomg@gmail.com"
         Team = "DevOps"
         Project = "Prueba"
